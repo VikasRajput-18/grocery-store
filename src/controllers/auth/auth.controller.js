@@ -55,20 +55,90 @@ export const loginDeliveryPartner = async (req, reply) => {
             })
         }
 
-        const isMatch = password = deliveryPartner.password;
+        const isMatch = password === deliveryPartner.password;
 
         if (!isMatch) {
             return reply.status(400).send({ message: "Invalid Credentials" })
         }
 
 
+        const { accessToken, refreshToken } = generateTokens(deliveryPartner)
+
         return reply.status(200).send({
             message: "Login Successful",
-            customer,
+            deliveryPartner,
             refreshToken,
             accessToken
         })
 
+    } catch (error) {
+        return reply.status(500).send({
+            message: "An error occurred",
+            error
+        })
+    }
+}
+
+export const refreshToken = async (req, reply) => {
+
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+        return reply.status(401).send({
+            message: "Refresh Token required"
+        })
+    }
+    try {
+        const decode = jwt.decode(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+        let user
+        if (decode.role === "Customer") {
+            user = await Customer.findOne(decode.userId);
+        } else if (decode.role === "DeliveryPartner") {
+            user = await DeliveryPartner.findOne(decode.userId);
+        } else {
+            return reply.status(403).send("Invalid Role")
+        }
+
+        if (!user) {
+            return reply.status(403).send("User not found")
+        }
+
+        const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
+
+        return reply.status(200).send({
+            message: "Token Refreshed",
+            refreshToken: newRefreshToken,
+            accessToken
+        })
+
+    } catch (error) {
+        return reply.status(403).send("Invalid Refresh Token")
+    }
+}
+
+export const fetchUser = async (req, reply) => {
+    try {
+        const { userId, role } = req.user;
+        let user;
+
+        if (role === "Customer") {
+            user = await Customer.findById(userId);
+        }
+        else if (role === "DeliveryPartner") {
+            user = await DeliveryPartner.findById(userId);
+        } else {
+            return reply.status(403).send({ message: "Invalid Role" })
+        }
+
+        if (!user) {
+            return reply.status(404).send({ message: "User not found" })
+
+        }
+
+        return reply.send({
+            message: "User fetched successfully",
+            user
+        })
     } catch (error) {
         return reply.status(500).send({
             message: "An error occurred",
