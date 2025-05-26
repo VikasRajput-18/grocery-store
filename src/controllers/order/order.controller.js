@@ -120,7 +120,7 @@ export const updateOrder = async (req, reply) => {
 
 
 
-export const getOrders = async (req, reply) => {
+export const getOrder = async (req, reply) => {
     try {
         const { status, customerId, deliveryPartnerId, branchId } = req.query;
         let query = {};
