@@ -6,6 +6,7 @@ const userSchema = new Schema({
         type: String
     },
     role: {
+        type: String,
         enum: ["Customer", "Admin", "DeliveryPartner"],
         required: true
     },
@@ -42,7 +43,7 @@ const customerSchema = new Schema({
     }
 });
 
-const deliveryPartnerSchema = await Schema({
+const deliveryPartnerSchema = new Schema({
     ...userSchema.obj,
     email: {
         type: String, required: true, unique: true
@@ -76,7 +77,7 @@ const deliveryPartnerSchema = await Schema({
 })
 
 
-const adminSchema = await Schema({
+const adminSchema = new Schema({
     ...userSchema.obj,
     email: { type: String, required: true, unique: true },
     role: {

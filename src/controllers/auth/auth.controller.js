@@ -1,4 +1,4 @@
-import { Customer, DeliveryPartner } from "../../models/index";
+import { Customer, DeliveryPartner } from "../../models/index.js";
 import jwt from "jsonwebtoken";
 
 

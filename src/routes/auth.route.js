@@ -5,7 +5,7 @@ import {
     refreshToken,
 } from "../controllers/auth/auth.controller.js"
 
-import { updateUser } from "../controllers/tracking/user.js"
+import { updateUser } from "../controllers/tracking/user.controller.js"
 
 import { verifyToken } from "../middlewares/verifyToken.middleware.js"
 

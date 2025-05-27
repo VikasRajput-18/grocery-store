@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Counter from "./counter.model.js"
+import { Counter } from "./counter.model.js"
 
 
 const orderSchema = new mongoose.Schema({
@@ -98,8 +98,8 @@ async function getNextSequenceValue(sequenceName) {
 
 orderSchema.pre("save", async function (next) {
     if (this.isNew) {
-         const sequenceValue = await getNextSequenceValue("orderId");
-         this.orderId = `ORDER${sequenceValue.toString().padStart(5,"0")}`
+        const sequenceValue = await getNextSequenceValue("orderId");
+        this.orderId = `ORDER${sequenceValue.toString().padStart(5, "0")}`
     }
 
     next();
